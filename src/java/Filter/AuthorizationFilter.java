@@ -104,6 +104,8 @@ public class AuthorizationFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
+        
+        // login button -> dispatcher
 
         if (debug) {
             log("AuthorizationFilter:doFilter()");

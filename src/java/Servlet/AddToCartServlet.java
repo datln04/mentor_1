@@ -8,6 +8,7 @@ package Servlet;
 import DAO.CartDAO;
 import DTO.Cart;
 import DTO.User;
+import Utils.utilities;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -43,27 +44,37 @@ public class AddToCartServlet extends HttpServlet {
 
         String url = "home.jsp";
         String mobileId = request.getParameter("mobileId");
+        String quantity = request.getParameter("quantity").isEmpty() ? "1" : request.getParameter("quantity");;
 
         HttpSession session = request.getSession();
         CartDAO cartDAO = new CartDAO();
         User user = (User) session.getAttribute("ACCOUNT");
 
         try {
-            Cart existCart = cartDAO.getCart(user.getUserId(), mobileId);
-            if (existCart == null) {
-                Cart cart = new Cart(0, user.getUserId(), mobileId, 1);
-                boolean result = cartDAO.insertCart(cart);
-                if (result) {
-                    List<Cart> list = cartDAO.getCarts(user.getUserId());
-                    session.setAttribute("CARTS", list);
-                }
-            } else {//30 + 1
-                existCart.setQuantity(existCart.getQuantity() + 1);
-                // quantity = 31
-                boolean result = cartDAO.setCartQuantity(existCart);
-                if (result) {
-                    List<Cart> list = cartDAO.getCarts(user.getUserId());
-                    session.setAttribute("CARTS", list);
+            // check quantity is positve and > 0
+            //check if quantity and yop is positive or not
+            boolean isQuantityPositive = utilities.isPositive(quantity);
+            if (!isQuantityPositive) {
+                request.setAttribute("POSITIVE_QUANTITY_ERROR", "quantity is negative digits, pls change to positive");
+            } else {
+                Cart existCart = cartDAO.getCart(user.getUserId(), mobileId);
+                if (existCart == null) {
+                    Cart cart = new Cart(0, user.getUserId(), mobileId, Integer.parseInt(quantity));
+                    // insert a new cart
+                    boolean result = cartDAO.insertCart(cart);
+                    if (result) {
+                        List<Cart> list = cartDAO.getCarts(user.getUserId());
+                        session.setAttribute("CARTS", list);
+                    }
+                } else {//30 + 1
+                    existCart.setQuantity(existCart.getQuantity() + Integer.parseInt(quantity));
+                    // quantity = 31
+                    // set to db again
+                    boolean result = cartDAO.setCartQuantity(existCart);
+                    if (result) {
+                        List<Cart> list = cartDAO.getCarts(user.getUserId());
+                        session.setAttribute("CARTS", list);
+                    }
                 }
             }
 

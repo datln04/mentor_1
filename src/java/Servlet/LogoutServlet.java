@@ -34,8 +34,10 @@ public class LogoutServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
+        // need login before
         HttpSession session = request.getSession();
         if(session != null){
+            // remove all session
             session.invalidate();
             response.sendRedirect("login.jsp");
         }

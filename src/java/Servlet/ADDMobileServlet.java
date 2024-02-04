@@ -59,10 +59,12 @@ public class ADDMobileServlet extends HttpServlet {
         boolean NotSale = false;
 
         Part filePart = request.getPart("image"); // Retrieves <input type="file" name="image">
-        String filePath = filePart.getSubmittedFileName(); // Retrieves complete file name with path and directories
-        Path p = Paths.get(filePath); // Creates a Path object
-        String fileName = p.getFileName().toString(); // Retrieves file name from Path object
+        String fileName = filePart.getSubmittedFileName();
+//        String filePath = filePart.getSubmittedFileName(); // Retrieves complete file name with path and directories / path: iamge.png
+//        Path p = Paths.get(filePath); // Creates a Path object -> Path in application
+//        String fileName = p.getFileName().toString(); // Retrieves file name from Path object
         InputStream fileContent = filePart.getInputStream(); // Converts Part data to InputStream
+                                                            //)@#-23-i-riwDIAW)Ie03qei0=2o=o32O-2 ( BUFFER )
 
         HttpSession session = request.getSession();
         MobileDAO dao = new MobileDAO();
@@ -87,13 +89,16 @@ public class ADDMobileServlet extends HttpServlet {
                 if (result) {
 
 // Define the path to the assets/images directory relative to the server's deployment directory
+                    // uploadPath = build directory after deployment
                     String uploadPath = getServletContext().getRealPath("") + "assets" + File.separator + "images";
-                    String tmp = uploadPath.replace("\\build", "");
+                    
+                    // web directory before deployment
+                    String tmp = uploadPath.replace("\\build", ""); //C://mentor/priject/web/assets/images
 
 // Create the directory if it doesn't exist
                     File uploadDir = new File(tmp);
                     if (!uploadDir.exists()) {
-                        uploadDir.mkdirs();
+                        uploadDir.mkdirs();// OS
                     }
 // Create the directory if it doesn't exist
                     File uploadBuildDir = new File(uploadPath);
@@ -102,19 +107,24 @@ public class ADDMobileServlet extends HttpServlet {
                     }
 
 // Construct the path to save the file
-                    String savePath = tmp + File.separator + fileName;
+                    String savePath = tmp + File.separator + fileName; //C://mentor/priject/web/assets/images/iphone-15.jng
+                    
                     // Construct the path to save the file
-                    String saveBuildPath = uploadPath + File.separator + fileName;
+                    String saveBuildPath = uploadPath + File.separator + fileName;// C://mentor/priject/build/web/assets/images/iphone-15.jng
 
+                    // C://mentor/priject/web/assets/images/iphone-15.jng
                     try (OutputStream out = new FileOutputStream(new File(savePath))) {
-                        byte[] buffer = new byte[1024];
-                        int bytesRead;
+                        //daposjdpisajdp91ue21ieu219re29e2-e21ihe2je21 return -1 -> input stream is a buffer contains many byte ( <= 1MB )
+                        byte[] buffer = new byte[1024]; // 1MB 
+                        int bytesRead;      //inputstream
                         while ((bytesRead = fileContent.read(buffer)) != -1) {
                             out.write(buffer, 0, bytesRead);
                         }
                     } catch (Exception e) {
                         e.printStackTrace(); // Handle the exception appropriately
                     }
+                    
+                    
                     try (OutputStream out = new FileOutputStream(new File(saveBuildPath))) {
                         byte[] buffer = new byte[1024];
                         int bytesRead;

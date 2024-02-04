@@ -311,6 +311,63 @@
             .search-container:hover{
                 animation: hoverShake 0.15s linear 3;
             }
+
+            /* The Modal (background) */
+            #mobileDetailModal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* The Modal (background) */
+            #addToCartModal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content */
+            .modal-content {
+                background-color: #fefefe;
+                margin: 15% auto; /* 15% from the top and centered */
+                padding: 20px;
+                border: 1px solid #888;
+                width: 80%; /* Could be more or less, depending on screen size */
+                max-width: 600px; /* Maximum width */
+            }
+
+            /* The Close Button */
+            .close-button {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+            }
+
+            .close-button:hover,
+            .close-button:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            .clickable-row{
+                cursor: pointer;
+            }
+
         </style>
 
 
@@ -333,34 +390,43 @@
                                 <th>Image</th>
                                 <th>Mobile Id</th>
                                 <th>Description</th>
-                                <th>Price</th>
-                                <th>Mobile Name</th>
-                                <th>Year Of Production</th>
-                                <th>Quantity</th>
-                                <th>Not Sale</th>
+                                <!--                                <th>Price</th>
+                                                                <th>Mobile Name</th>
+                                                                <th>Year Of Production</th>
+                                                                <th>Quantity</th>
+                                                                <th>Not Sale</th>-->
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach items="${sessionScope.MOBILE_DATA}" var="m">
-                            <form action="DispatcherServlet" method="POST">
-                                <input type="hidden" name="mobileId" value="${m.mobileId}"/>
-                                <tr>
-                                    <td>
-                                        <img src="./assets/images/${m.image}" alt="Default Image" style="width: 50px; height: 50px">
-                                    </td>
-                                    <td>${m.mobileId}</td>
-                                    <td>${m.description}</td>
-                                    <td>${m.price}</td>
-                                    <td>${m.mobileName}</td>
-                                    <td>${m.yearOfProduction}</td>
-                                    <td>${m.quantity}</td>
-                                    <td>${m.notSale}</td>
-                                    <td>
-                                        <input type="submit" name="action" value="Add To Cart" class="btn btn-outline-success"/>
-                                    </td>
-                                </tr>
-                            </form>
+                                <!--<form action="DispatcherServlet" method="POST">-->
+                            <input type="hidden" name="mobileId" value="${m.mobileId}"/>
+                            <tr>
+
+                                <td class="clickable-row" 
+                                    data-mobile-id="${m.mobileId}" 
+                                    data-mobile-name="${m.mobileName}" 
+                                    data-description="${m.description}"
+                                    data-price="${m.price}" 
+                                    data-year-of-production="${m.yearOfProduction}" 
+                                    data-quantity="${m.quantity}" 
+                                    data-not-sale="${m.notSale}" 
+                                    data-image="${m.image}">
+                                    <img src="./assets/images/${m.image}" alt="Default Image" style="width: 250px; height: 150px">
+                                </td>
+                                <td>${m.mobileId}</td>
+                                <td>${m.description}</td>
+<!--                                    <td>${m.price}</td>
+                                <td>${m.mobileName}</td>
+                                <td>${m.yearOfProduction}</td>
+                                <td>${m.quantity}</td>
+                                <td>${m.notSale}</td>-->
+                                <td>
+                                    <input type="submit" class="btn btn-outline-success quantity-button-adding" value="Add to cart" data-mobile-cart-id="${m.mobileId}" />
+                                </td>
+                            </tr>
+                            <!--</form>-->
                         </c:forEach>
                         </tbody>
                     </table>
@@ -380,11 +446,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach items="${sessionScope.CARTS}" var="m">
+                            <c:forEach items="${sessionScope.CARTS}" var="m" varStatus="counter">
                             <form action="DispatcherServlet" method="POST">
                                 <input type="hidden" name="cartId" value="${m.cartId}"/>
                                 <tr>
-                                    <td>${m.cartId}</td>
+                                    <td>${counter.count}</td>
                                     <td>${m.userId}</td>
                                     <td>${m.mobileId}</td>
                                     <td>${m.quantity}</td>
@@ -399,24 +465,125 @@
                 </div>
             </div>
         </div>
-    </body>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script>
-        if (${requestScope.POSITIVE_NUMBER_ERROR != null}) {
-            swal({
-                title: "Opps!",
-                text: '${requestScope.POSITIVE_NUMBER_ERROR}',
-                icon: "error",
-                button: "Ok"
+        <!-- The Modal -->
+        <div id="mobileDetailModal" style="display:none;">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2 id="modalMobileName">Mobile Name</h2>
+                <!--<img id="modalImage" alt="Mobile Image" style="width: 100px; height: 100px">-->
+                <p><b>Description: </b><span id="modalDescription"></span></p>
+                <p id="modalDetails"><b>Price: </b><span id="modalPrice"></span><br>
+                    <b>Year of Production: </b><span id="modalYearOfProduction"></span><br>
+                    <b>Quantity: </b><span id="modalQuantity"></span><br>
+                    <b>Not Sale: </b><span id="modalNotSale"></span>
+                </p
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="addToCartModal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-button-quantity">&times;</span>
+            <h2>Add to Cart</h2>
+            <form method="POST" action="DispatcherServlet">
+                <!--<img id="modalImage" alt="Mobile Image" style="width: 100px; height: 100px">-->
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="cartQuantity" name="quantity" min="1">
+                <input type="hidden" id="cartMobileId" name="mobileId">
+                <input type="submit" class="btn btn-primary" name="action" value="Add To Cart" />
+            </form>
+        </div>
+    </div>
+
+</body>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    if (${requestScope.POSITIVE_NUMBER_ERROR != null}) {
+        swal({
+            title: "Opps!",
+            text: '${requestScope.POSITIVE_NUMBER_ERROR}',
+            icon: "error",
+            button: "Ok"
+        });
+    }
+    if (${requestScope.INVALID_RANGE != null}) {
+        swal({
+            title: "Opps!",
+            text: '${requestScope.INVALID_RANGE}',
+            icon: "error",
+            button: "Ok"
+        });
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to open the modal and display mobile details
+        const showModal = (mobileData) => {
+            document.getElementById('modalMobileName').textContent = mobileData.mobileName;
+            document.getElementById('modalDescription').textContent = mobileData.description;
+            document.getElementById('modalPrice').textContent = mobileData.price;
+            document.getElementById('modalYearOfProduction').textContent = mobileData.yearOfProduction;
+            document.getElementById('modalQuantity').textContent = mobileData.quantity;
+            document.getElementById('modalNotSale').textContent = mobileData.notSale;
+
+            document.getElementById('mobileDetailModal').style.display = "block";
+        };
+
+        // Function to open the modal and display mobile details
+        const showQuantityModal = (mobileData) => {
+            console.log('hehe', mobileData.mobileId)
+            document.getElementById('cartMobileId').value = mobileData.mobileId;
+
+            document.getElementById('addToCartModal').style.display = "block";
+        };
+
+        // Event listener for closing the modal
+        document.querySelector('.close-button').addEventListener('click', function () {
+            document.getElementById('mobileDetailModal').style.display = "none";
+        });
+
+        // Event listener for closing the modal
+        document.querySelector('.close-button-quantity').addEventListener('click', function () {
+            document.getElementById('addToCartModal').style.display = "none";
+        });
+
+        // Attach an event listener to each row
+        document.querySelectorAll('.quantity-button-adding').forEach(row => {
+            row.addEventListener('click', function () {
+                const quantityData = {
+                    mobileId: this.getAttribute('data-mobile-cart-id'),
+                };
+
+                showQuantityModal(quantityData);
             });
-        }
-        if (${requestScope.INVALID_RANGE != null}) {
-            swal({
-                title: "Opps!",
-                text: '${requestScope.INVALID_RANGE}',
-                icon: "error",
-                button: "Ok"
+        });
+
+        // Attach an event listener to each row
+        document.querySelectorAll('.clickable-row').forEach(row => {
+            row.addEventListener('click', function () {
+                const mobileData = {
+                    mobileId: this.getAttribute('data-mobile-id'),
+                    mobileName: this.getAttribute('data-mobile-name'),
+                    description: this.getAttribute('data-description'),
+                    price: this.getAttribute('data-price'),
+                    yearOfProduction: this.getAttribute('data-year-of-production'),
+                    quantity: this.getAttribute('data-quantity'),
+                    notSale: this.getAttribute('data-not-sale'),
+                    image: this.getAttribute('data-image')
+                };
+                console.log(mobileData)
+                showModal(mobileData);
             });
-        }
-    </script>
+        });
+
+//            // Prevent row click when the "Add To Cart" button is clicked
+//            document.querySelectorAll('.btn-add-cart').forEach(button => {
+//                button.addEventListener('click', function (e) {
+//                    e.stopPropagation();
+//                });
+//            });
+    });
+</script>
+
 </html>

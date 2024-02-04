@@ -33,7 +33,7 @@ public class MobileDAO {
         try {
             con = DBUtils.getConnection();
             String sql = "select mobileId, description, price, mobileName, yearOfProduction, quantity, notSale, image\n"
-                    + "from tbl_Mobile";
+                    + "from tbl_Mobile where notSale = 0";
             //step2: create request to db
             pst = con.prepareStatement(sql);
             //step3: create result set 

@@ -3,8 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Personal/Mentor/JSP-Servlet/project/workshop_1/src/java/Servlet/ADDMobileServlet.java</file>
-            <file>file:/C:/Personal/Mentor/JSP-Servlet/project/workshop_1/web/staff.jsp</file>
+            <file>file:/C:/Personal/Mentor/JSP-Servlet/project/workshop_1/src/java/Servlet/LoginServlet.java</file>
+            <file>file:/C:/Personal/Mentor/JSP-Servlet/project/workshop_1/web/home.jsp</file>
+            <file>file:/C:/Personal/Mentor/JSP-Servlet/project/workshop_1/src/java/DAO/MobileDAO.java</file>
+            <file>file:/C:/Personal/Mentor/JSP-Servlet/project/workshop_1/src/java/Servlet/AddToCartServlet.java</file>
+            <file>file:/C:/Personal/Mentor/JSP-Servlet/project/workshop_1/src/java/DAO/CartDAO.java</file>
+            <file>file:/C:/Personal/Mentor/JSP-Servlet/project/workshop_1/src/java/Servlet/LookupServlet.java</file>
         </group>
     </open-files>
 </project-private>
